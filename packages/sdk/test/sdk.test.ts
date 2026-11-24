@@ -3,6 +3,7 @@ import { scValToNative } from "@stellar/stellar-sdk";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_MAX_AGE_SECONDS,
+  DEFAULT_MIN_BPS,
   IndexerClient,
   IndexerError,
   NOTHING_OWED_BPS,
@@ -51,8 +52,9 @@ describe("format", () => {
   });
 
   it("classifies status", () => {
-    expect(coverageStatus(10_000, { report: 60 })).toBe("covered");
-    expect(coverageStatus(9_999, { report: 60 })).toBe("under");
+    expect(DEFAULT_MIN_BPS).toBe(10_000);
+    expect(coverageStatus(DEFAULT_MIN_BPS, { report: 60 })).toBe("covered");
+    expect(coverageStatus(DEFAULT_MIN_BPS - 1, { report: 60 })).toBe("under");
     expect(coverageStatus(10_500, { report: 40 * 86_400 })).toBe("stale");
     expect(coverageStatus(null, { report: 60 })).toBe("unknown");
     expect(coverageStatus(10_500, { report: null })).toBe("unknown");
