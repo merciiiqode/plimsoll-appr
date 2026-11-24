@@ -82,11 +82,12 @@ export function coverageStatus(
   bps: number | null | undefined,
   ages: CoverageAges,
   maxAgeSeconds: number = DEFAULT_MAX_AGE_SECONDS,
+  minBps: number = DEFAULT_MIN_BPS,
 ): CoverageStatus {
   if (bps == null || ages.report == null) return "unknown";
   if (ages.report > maxAgeSeconds) return "stale";
   if (ages.supply != null && ages.supply > maxAgeSeconds) return "stale";
-  return bps >= DEFAULT_MIN_BPS ? "covered" : "under";
+  return bps >= minBps ? "covered" : "under";
 }
 
 export function tierLabel(tier: Tier): string {

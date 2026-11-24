@@ -60,6 +60,20 @@ describe("format", () => {
     expect(coverageStatus(10_500, { report: null })).toBe("unknown");
   });
 
+  it("classifies against a caller-chosen threshold", () => {
+    const ages = { report: 60 };
+
+    expect(coverageStatus(10_000, ages)).toBe("covered");
+    expect(coverageStatus(10_000, ages, DEFAULT_MAX_AGE_SECONDS, 10_200)).toBe("under");
+    expect(coverageStatus(10_200, ages, DEFAULT_MAX_AGE_SECONDS, 10_200)).toBe("covered");
+
+    expect(coverageStatus(10_000, ages, DEFAULT_MAX_AGE_SECONDS, 9_800)).toBe("covered");
+    expect(coverageStatus(9_799, ages, DEFAULT_MAX_AGE_SECONDS, 9_800)).toBe("under");
+
+    expect(coverageStatus(10_200, { report: 10 * 86_400 })).toBe("stale");
+    expect(coverageStatus(10_200, { report: 10 * 86_400 }, 31 * 86_400, 10_200)).toBe("covered");
+  });
+
   // The demo's PUSD vault asks for a report at most 7 days old. A page that
   // judged against 31 days called an expired report "Fully backed" for
   // sixteen days while the vault refused every deposit.
